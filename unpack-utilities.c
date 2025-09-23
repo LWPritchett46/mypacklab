@@ -92,7 +92,7 @@ uint16_t calculate_checksum(uint8_t* input_data, size_t input_len) {
   uint16_t checksum = 0;
 
   for (int i = 0; i < input_len; i++) {
-    checksum += (uint8_t)input_data[i];
+    checksum += (uint16_t)input_data[i];
   }
 
   return checksum;
