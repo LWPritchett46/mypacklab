@@ -191,12 +191,12 @@ void join_float_array(uint8_t* input_signfrac, size_t input_len_bytes_signfrac,
   size_t n = input_len_bytes_exp;
 
   if (input_len_bytes_signfrac != 3*n) {
-    printf("ERROR: signfrac is incorrectly sized, expected %d bytes, got %d.\n", 3*n, input_len_bytes_signfrac);
+    printf("ERROR: signfrac is incorrectly sized, expected %d bytes, got %d.\n", 3*(int)n, (int)input_len_bytes_signfrac);
     return;
   }
 
   if (output_len_bytes < 4*n) {
-    printf("ERROR: output is too small, expected >= %d bytes, got %d.\n", 4*n, output_len_bytes);
+    printf("ERROR: output is too small, expected >= %d bytes, got %d.\n", 4*(int)n, (int)output_len_bytes);
     return;
   }
 
