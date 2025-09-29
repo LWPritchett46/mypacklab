@@ -128,6 +128,38 @@ int parse_header_test(void) {
   return 0;
 }
 
+int decompress_test(void) {
+  uint8_t input_data[] = {0x01, 0x07, 0x42};
+  uint8_t output_data[5];
+
+  uint8_t dict[] = {0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37,
+                  0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D, 0x3E, 0x3F};
+
+  decompress_data(input_data, 3, output_data, 5, dict);
+
+  if (output_data[0] != 0x01) {
+    printf("ERROR: Expected value 0x01, got %2x\n", output_data[0]);
+    return 1;
+  }
+  if (output_data[1] != 0x32) {
+    printf("ERROR1: Expected value 0x32, got 0x%2x\n", output_data[1]);
+    return 1;
+  }
+  if (output_data[2] != 0x32) {
+    printf("ERROR2: Expected value 0x32, got 0x%2x\n", output_data[1]);
+    return 1;
+  }
+  if (output_data[3] != 0x32) {
+    printf("ERROR3: Expected value 0x32, got 0x%2x\n", output_data[1]);
+    return 1;
+  }
+  if (output_data[4] != 0x32) {
+    printf("ERROR4: Expected value 0x32, got 0x%2x\n", output_data[1]);
+    return 1;
+  }
+
+  return 0;
+}
 
 int main(void) {
 
@@ -154,6 +186,12 @@ int main(void) {
   result = parse_header_test();
   if (result != 0) {
     printf("ERROR: parse header test failed\n");
+    return 1;
+  }
+
+  result = decompress_test();
+  if (result != 0) {
+    printf("ERROR: decompression test failed\n");
     return 1;
   }
 

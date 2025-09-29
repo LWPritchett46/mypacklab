@@ -58,7 +58,7 @@ void parse_header(uint8_t* input_data, size_t input_len, packlab_config_t* confi
     temp_size += (uint64_t)input_data[i] << (8 * (i - 4));
   }
   config->orig_data_size = (temp_size);
-  
+
   temp_size = 0;
   for (int i = 12; i < 20; i++) {
     temp_size += (uint64_t)input_data[i] << (8 * (i - 12));
@@ -160,8 +160,8 @@ size_t decompress_data(uint8_t* input_data, size_t input_len,
         output_data[output_index] = 0x07;
         output_index++;
       } else {
-        int repeat_count = input_data[i + 1] % 16;
-        int dict_index = input_data[i + 1] / 16;
+        int repeat_count = input_data[i + 1] / 16;
+        int dict_index = input_data[i + 1] % 16;
 
         for (int j = 0; j < repeat_count; j++) {
           output_data[output_index] = dictionary_data[dict_index];
@@ -172,10 +172,11 @@ size_t decompress_data(uint8_t* input_data, size_t input_len,
       i++;
     } else {
       output_data[output_index] = input_data[i];
+      output_index++;
     }
   }
 
-  return output_index + 1;
+  return output_index;
 }
 
 void join_float_array(uint8_t* input_signfrac, size_t input_len_bytes_signfrac,
