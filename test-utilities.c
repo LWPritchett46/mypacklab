@@ -105,7 +105,7 @@ int example_test(void) {
 int parse_header_test(void) {
   uint8_t input_data[] = {0x02, 0x13, 0x03, 0x00, 
     0x67, 0x45, 0x23, 0x01, 0x00, 0x00, 0x00, 0x00,
-    0x11, 0x11, 0x11, 0x11, 0x00, 0x00, 0x00, 0x00};
+    0x11, 0x11, 0x11, 0x11, 0x22, 0x22, 0x22, 0x22};
 
   packlab_config_t config;
 
@@ -120,10 +120,26 @@ int parse_header_test(void) {
     return 1;
   }
 
-  if (config.data_size != 0x0000000011111111) {
-    printf("ERROR: expected data size is 0x%16lX, got 0x%16lX\n", (uint64_t)0x0000000011111111, config.data_size);
+  if (config.data_size != 0x2222222211111111) {
+    printf("ERROR: expected data size is 0x%16lX, got 0x%16lX\n", (uint64_t)0x2222222211111111, config.data_size);
     return 1;
   }
+
+  return 0;
+}
+
+int decrypt_test(void) {
+  uint8_t input_data[] = {0x60, 0x5A, 0xFF, 0xB7};
+  uint8_t output_data[4];
+
+  uint16_t key = 0x1337;
+
+  decrypt_data(input_data, 4, output_data, 4, key);
+
+  if (output_data[0] != 0xFB) return 1;
+  if (output_data[1] != 0x53) return 1;
+  if (output_data[2] != 0x32) return 1;
+  if (output_data[3] != 0x33) return 1;
 
   return 0;
 }
@@ -213,6 +229,12 @@ int main(void) {
   result = parse_header_test();
   if (result != 0) {
     printf("ERROR: parse header test failed\n");
+    return 1;
+  }
+
+  result = decrypt_test();
+  if (result != 0) {
+    printf("ERROR: decryption test failed\n");
     return 1;
   }
 

@@ -131,8 +131,8 @@ void decrypt_data(uint8_t* input_data, size_t input_len,
 
   for (int i = 0; i < (input_len - 1); i += 2) {
     encryption_key = lfsr_step(encryption_key);
-    key_least = (uint8_t) encryption_key % 256;
-    key_most  = (uint8_t) encryption_key / 256;
+    key_least = (uint8_t) (encryption_key % 256);
+    key_most  = (uint8_t) (encryption_key / 256);
 
     output_data[i] = key_least ^ input_data[i];
     output_data[i + 1] = key_most ^ input_data[i + 1];
