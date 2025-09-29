@@ -188,6 +188,27 @@ void join_float_array(uint8_t* input_signfrac, size_t input_len_bytes_signfrac,
   // into one output stream of floating point data
   // Output bytes are in little-endian order
 
+  size_t n = input_len_bytes_exp;
+
+  if (input_len_bytes_signfrac != 3*n) {
+    printf("ERROR: signfrac is incorrectly sized, expected %d bytes, got %d.\n", 3*n, input_len_bytes_signfrac);
+    return;
+  }
+
+  if (output_len_bytes < 4*n) {
+    printf("ERROR: output is too small, expected >= %d bytes, got %d.\n", 4*n, output_len_bytes);
+    return;
+  }
+
+  for (int i = 0; i < (output_len_bytes / 4); i++) {
+    uint8_t sign = input_signfrac[3*i+2] & 0x80;
+    uint8_t frac = input_signfrac[3*i+2] - sign;
+    
+    output_data[4*i] = input_signfrac[3*i];
+    output_data[4*i+1] = input_signfrac[3*i+1];
+    output_data[4*i+2] = frac + ((input_exp[i] & 0x01) << 7);
+    output_data[4*i+3] = (input_exp[i] >> 1) + sign;
+  }
 }
 /* End of mandatory implementation. */
 

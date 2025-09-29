@@ -161,6 +161,33 @@ int decompress_test(void) {
   return 0;
 }
 
+int float_streams_test(void) {
+  uint8_t input_signfrac[] = {0x00, 0x00, 0x16};
+  uint8_t input_exp[] = {0x87};
+  uint8_t output[4];
+
+  join_float_array(input_signfrac, 3, input_exp, 1, output, 4);
+
+  if (output[0] != 0x00) {
+    printf("ERROR\n");
+    return 1;
+  }
+  if (output[1] != 0x00) {
+    printf("ERROR\n");
+    return 1;
+  }
+  if (output[2] != 0x96) {
+    printf("ERROR\n");
+    return 1;
+  }
+  if (output[3] != 0x43) {
+    printf("ERROR\n");
+    return 1;
+  }
+
+  return 0;
+}
+
 int main(void) {
 
   // Test the LFSR implementation
@@ -192,6 +219,12 @@ int main(void) {
   result = decompress_test();
   if (result != 0) {
     printf("ERROR: decompression test failed\n");
+    return 1;
+  }
+
+  result = float_streams_test();
+  if (result != 0) {
+    printf("ERROR: float stream test failed\n");
     return 1;
   }
 
