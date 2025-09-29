@@ -53,10 +53,16 @@ void parse_header(uint8_t* input_data, size_t input_len, packlab_config_t* confi
   config->should_float3   = (bool) (flags & 0x04);
 
   // Read and assign data size
-  uint64_t temp_size;
-  memcpy(&temp_size, input_data + 4, sizeof(uint64_t));
+  uint64_t temp_size = 0;
+  for (int i = 4; i < 12; i++) {
+    temp_size += (uint64_t)input_data[i] << (8 * (i - 4));
+  }
   config->orig_data_size = (temp_size);
-  memcpy(&temp_size, input_data + 12, sizeof(uint64_t));
+  
+  temp_size = 0;
+  for (int i = 12; i < 20; i++) {
+    temp_size += (uint64_t)input_data[i] << (8 * (i - 12));
+  }
   config->data_size      = (temp_size);
 
   // Header length is 20 bytes + 16 optional dictionary bytes + 2 optional checksum bytes
