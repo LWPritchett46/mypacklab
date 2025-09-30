@@ -66,7 +66,7 @@ void parse_header(uint8_t* input_data, size_t input_len, packlab_config_t* confi
   config->data_size      = (temp_size);
 
   // Header length is 20 bytes + 16 optional dictionary bytes + 2 optional checksum bytes
-  config->header_len = 20 + (DICTIONARY_LENGTH * (int)config->is_encrypted) + (2 * (int)config->is_checksummed);
+  config->header_len = 20 + (DICTIONARY_LENGTH * (int)config->is_compressed) + (2 * (int)config->is_checksummed);
 
   // Check again that input file is not too small
   if (input_len < config->header_len) {
@@ -114,7 +114,7 @@ uint16_t lfsr_step(uint16_t oldstate) {
   bool new_bit = bit_0 ^ bit_6 ^ bit_9 ^ bit_13;
 
   uint16_t newstate = oldstate >> 1;
-  newstate += (int) new_bit * 0x8000;
+  newstate += ((int) new_bit << 15);
 
   return newstate;
 }
@@ -128,6 +128,10 @@ void decrypt_data(uint8_t* input_data, size_t input_len,
 
   uint8_t key_least;
   uint8_t key_most;
+
+  if (input_len > output_len || input_len == 0) {
+    return;
+  }
 
   for (int i = 0; i < (input_len - 1); i += 2) {
     encryption_key = lfsr_step(encryption_key);
