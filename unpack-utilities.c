@@ -126,6 +126,7 @@ void decrypt_data(uint8_t* input_data, size_t input_len,
   // TODO
   // Decrypt input_data and write result to output_data
 
+
   uint8_t key_least;
   uint8_t key_most;
 
@@ -139,9 +140,11 @@ void decrypt_data(uint8_t* input_data, size_t input_len,
     key_most  = (uint8_t) (encryption_key / 256);
 
     output_data[i] = key_least ^ input_data[i];
-    output_data[i + 1] = key_most ^ input_data[i + 1];
+    output_data[i+1] = key_most ^ input_data[i+1];
   }
   if (input_len % 2 != 0) {
+    encryption_key = lfsr_step(encryption_key);
+    key_least = (uint8_t) (encryption_key % 256);
     output_data[input_len - 1] = key_least ^ input_data[input_len - 1];
   }
 
@@ -155,11 +158,11 @@ size_t decompress_data(uint8_t* input_data, size_t input_len,
   // Decompress input_data and write result to output_data
   // Return the length of the decompressed data
 
+
   int output_index = 0;
 
   for (int i = 0; i < input_len; i++) {
     if (input_data[i] == 0x07) {
-
       if (i + 1 >= input_len || input_data[i + 1] == 0x00) {
         output_data[output_index] = 0x07;
         output_index++;
@@ -178,8 +181,8 @@ size_t decompress_data(uint8_t* input_data, size_t input_len,
       output_data[output_index] = input_data[i];
       output_index++;
     }
-  }
 
+  }
   return output_index;
 }
 
